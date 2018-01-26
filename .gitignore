@@ -3,7 +3,7 @@
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-./debain.json
-./electron-config.json
-./settings.json
+debain.json
+electron-config.json
+settings.json
 ./node_modules/*
