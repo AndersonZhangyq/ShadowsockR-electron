@@ -1,0 +1,19 @@
+{
+  "name": "ShadowsocksR",
+  "productName": "ShadowsocksR",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "electron .",
+    "package-linux": "electron-packager . ShadowsocksR --overwrite --asar=true --platform=linux --arch=x64 --prune=true --out=release-builds"
+
+  },
+  "main": "main.js",
+  "dependencies": {
+    "bootstrap": "^3.3.7"
+  },
+  "devDependencies": {
+    "eslint": "^4.15.0",
+    "eslint-plugin-react": "^7.5.1",
+    "electron": "1.7.10"
+  }
+  }

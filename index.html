@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>ShadowsocksR</title>
+	<link rel="stylesheet" href="./css/bootstrap.css">
+	<style>
+		.table>tbody>tr>td:first-child {
+			text-align: right;
+			font-weight: bold;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="table">
+		<table class="table table-hover table-border" style="white-space:nowrap;overflow:hidden;">
+			<thead>
+				<tr>
+					<th style="text-align: right">#</th>
+					<th>备注名</th>
+					<th>服务器地址</th>
+					<th>端口号</th>
+					<!-- <th>密码</th> -->
+					<th>加密方式</th>
+					<th>协议</th>
+					<th>协议参数</th>
+					<th>混淆</th>
+					<th>混淆参数</th>
+				</tr>
+			</thead>
+			<tbody id="proxyInfo">
+
+			</tbody>
+		</table>
+	</div>
+	<div class="modal fade" tabindex="-1" role="dialog" id="add-proxy-by-link" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+					<h4 class="modal-title">Add Proxy by SSR link</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<h5 class="modal-title" style="margin-bottom: 10px">Separate links by ';' or each link per line</h5>
+						<textarea id="proxyLinks" class="form-control" rows="5" style="min-width: 100%;resize: none;"></textarea>
+					</div>
+					<div class="col-sm-offset-5">
+						<button id="addProxy_links" type="button" class="btn btn-default" data-dismiss="modal">Add Proxy</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="edit-proxy-data" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+					<h4 class="modal-title">Edit Proxy Data</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" id="proxyDataForm" data-index="">
+						<div class="form-group">
+							<label for="server" class="col-sm-3 control-label">Server IP</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="server" placeholder="Server IP">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="server_port" class="col-sm-3 control-label">Server Port</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="server_port" placeholder="Server Port">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="password" class="col-sm-3 control-label">Password</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="password" placeholder="Password">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="method" class="col-sm-3 control-label">Method</label>
+							<div class="col-sm-9">
+								<select class="form-control" id="method">
+									<option id="none">none</option>
+									<option id="aes-128-ctr">aes-128-ctr</option>
+									<option id="aes-192-ctr">aes-192-ctr</option>
+									<option id="aes-256-ctr">aes-256-ctr</option>
+									<option id="aes-128-cfb">aes-128-cfb</option>
+									<option id="aes-192-cfb">aes-192-cfb</option>
+									<option id="aes-256-cfb">aes-256-cfb</option>
+									<option id="rc4">rc4</option>
+									<option id="rc4-md5">rc4-md5</option>
+									<option id="rc4-md5-6">rc4-md5-6</option>
+									<option id="salsa20">salsa20</option>
+									<option id="chacha20">chacha20</option>
+									<option id="chacha20-ietf">chacha20-ietf</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="protocol" class="col-sm-3 control-label">Protocol</label>
+							<div class="col-sm-9">
+								<select class="form-control" id="protocol">
+									<option id="origin">origin</option>
+									<option id="verify_deflate">verify_deflate</option>
+									<option id="auth_sha1_v4">auth_sha1_v4</option>
+									<option id="auth_aes128_md5">auth_aes128_md5</option>
+									<option id="auth_aes128_sha1">auth_aes128_sha1</option>
+									<option id="auth_chain_a">auth_chain_a</option>
+									<option id="auth_chain_b">auth_chain_b</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="protocolparam" class="col-sm-3 control-label">Protocol param</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="protocolparam" placeholder="Protocol param">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="obfs" class="col-sm-3 control-label">Obfs</label>
+							<div class="col-sm-9">
+								<select class="form-control" id="obfs">
+									<option id="plain">plain</option>
+									<option id="http_simple">http_simple</option>
+									<option id="http_post">http_post</option>
+									<option id="random_head">random_head</option>
+									<option id="tls1.2_ticket_auth">tls1.2_ticket_auth</option>
+									<option id="tls1.2_ticket_fastauth">tls1.2_ticket_fastauth</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="obfsparam" class="col-sm-3 control-label">Obfs param</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="obfsparam" placeholder="Obfs param">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="Remarks" class="col-sm-3 control-label">Remarks</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="remarks" placeholder="Remarks">
+							</div>
+						</div>
+						<div class="col-sm-offset-5">
+							<button id="confirmButton" type="button" class="btn btn-default" data-dismiss="modal">Confirm</button>
+							<button id="addProxy_detail" type="button" class="btn btn-default" data-dismiss="modal" style="display: none">Add Proxy</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script>
+	window.$ = window.jQuery = require('./js/jquery-3.2.1.min.js')
+	window.onload = () => {
+		parseJson = require('./render/parseJson.js')
+		// parseJson.checkData()
+		document.getElementById('confirmButton').onclick = require('./render/connectHelper').updateData
+		document.getElementById('addProxy_detail').onclick = require('./render/connectHelper').addData_detail
+		document.getElementById('addProxy_links').onclick = require('./render/connectHelper').addData_link
+		$('#edit-proxy-data').on('hidden.bs.modal', (e) => {
+			form_ = document.getElementById('proxyDataForm')
+			form_.reset()
+			form_.dataset.index = ""
+		})
+		$('#add-proxy-by-link').on('hidden.bs.modal', (e) => {			
+			document.getElementById('proxyLinks').value = ''
+		})
+	}
+</script>
+<script src="./js/bootstrap.min.js"></script>
+
+</html>
