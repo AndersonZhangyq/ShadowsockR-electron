@@ -20,9 +20,16 @@ function createWindow() {
 
 	//  win.webContents.openDevTools()
 
+	win.on('close', windows_close)
+
 	win.on('closed', () => {
 		win = null
 	})
+}
+
+function windows_close(e) {
+	e.preventDefault();
+	win.webContents.send('Terminate-before-close-app')
 }
 
 var menuBar = [
@@ -79,6 +86,12 @@ var menuBar = [
 				label: 'Terminate all thread',
 				click: () => {
 					win.webContents.send('Terminate-all-threads')
+				}
+			},
+			{
+				label: 'Add Proxy by RSS',
+				click: () => {
+					win.webContents.send('Add-Proxy-by-RSS')
 				}
 			},
 			{
@@ -160,4 +173,9 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
 	createWindow()
+})
+
+ipcMain.on('quit-app', () => {
+	win.removeListener('close', windows_close)
+	app.quit()
 })

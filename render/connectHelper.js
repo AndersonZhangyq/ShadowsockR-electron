@@ -16,7 +16,7 @@ const option = {
     '-g': 'obfsparam'
 }
 
-let hasConnected = false, connectTr,
+let hasConnected = false, connectTr = null,
     subThread, ssrLocation = '', path = './settings.json'
 
 fs.open(path, 'r', (err, fd) => {
@@ -34,9 +34,12 @@ fs.open(path, 'r', (err, fd) => {
     }
 })
 
-ipcRenderer.on('Add-Proxy-by-SSR-link', (event, links) => {
+ipcRenderer.on('Add-Proxy-by-SSR-link', (event) => {
     $('#add-proxy-by-link').modal('toggle')
-    console.log(links)
+})
+
+ipcRenderer.on('Add-Proxy-by-RSS', (event) => {
+    $('#add-proxy-by-rss').modal('toggle')
 })
 
 ipcRenderer.on('SSR-location', (event, directory) => {
@@ -70,9 +73,28 @@ ipcRenderer.on('Terminate-all-threads', (event, directory) => {
     })
 })
 
+ipcRenderer.on('Terminate-before-close-app', (event, directory) => {
+    if (connectTr === null){
+        ipcRenderer.send('quit-app')
+        return
+    }
+    dialog.showMessageBox({
+        type: 'warning',
+        buttons: ['Terminate all connect', 'Cancel'],
+        defaultId: 1,
+        message: 'You have already connect to a proxy server.\nQuit this app will terminate all connections!',
+        cancelId: 1,
+    }, (response) => {
+        if (response == 0) {
+            terminateConnection()
+            ipcRenderer.send('quit-app')
+        }
+    })
+})
+
 ipcRenderer.on('Add-Proxy-by-detail', (event, directory) => {
     $('#edit-proxy-data').modal('toggle')
-    document.getElementById('addButton').style = ''
+    document.getElementById('addProxy_detail').style = ''
     document.getElementById('confirmButton').style = 'display: none'
 })
 
@@ -126,7 +148,7 @@ exports.addRightClickHandler = (tr) => {
                     originData = parseJson.proxyData['configs'][index]
                     $('#edit-proxy-data').modal('toggle')
                     document.getElementById('confirmButton').style = ''
-                    document.getElementById('addButton').style = 'display: none'
+                    document.getElementById('addProxy_detail').style = 'display: none'
                     document.getElementById('proxyDataForm').dataset.index = index
                     document.getElementById('server').value = originData['server']
                     document.getElementById('server_port').value = originData['server_port']
@@ -147,7 +169,6 @@ exports.addRightClickHandler = (tr) => {
                 }
             }
         ]
-
         menu = Menu.buildFromTemplate(rightClickMenu)
         e.preventDefault()
         menu.popup(remote.getCurrentWindow)
@@ -217,7 +238,7 @@ function parseSSRLink(data) {
     other_data = deocoded_data[5].substring(deocoded_data[5].indexOf('/?') + 2)
     search = new URLSearchParams(other_data)
     pwd = Buffer.from(deocoded_data[5].substring(0, deocoded_data[5].indexOf('/?')), 'base64').toString('utf-8')
-    pp = search.get('protocoparam')
+    pp = search.get('protoparam')
     op = search.get('obfsparam')
     r = search.get('remarks')
     g = search.get('group')
@@ -225,8 +246,8 @@ function parseSSRLink(data) {
         server: deocoded_data[0],
         server_port: deocoded_data[1],
         password: pwd,
-        method: deocoded_data[2],
-        protocol: deocoded_data[3],
+        protocol: deocoded_data[2],
+        method: deocoded_data[3],
         protocolparam: pp ? Buffer.from(pp, 'base64').toString('utf-8') : '',
         obfs: deocoded_data[4],
         obfsparam: op ? Buffer.from(op, 'base64').toString('utf-8') : '',
@@ -246,6 +267,34 @@ exports.addData_detail = () => {
     newData = getEditedData()
     parseJson.proxyData['configs'].push(newData)
     parseJson.refresh()
+}
+
+exports.addData_rss = () => {
+    rss_url = document.getElementById('proxyRSS').value
+    exec(`curl ${rss_url}`, (err, stdout, stderr) => {
+        if (err)
+            console.log(err)
+        else{
+            all_ssrs = Buffer.from(stdout, 'base64').toString('utf-8')
+            all_ssrs.trim()
+            seperator = ''
+            if (all_ssrs.indexOf(';') != -1) {
+                seperator = ';'
+            } else if (all_ssrs.indexOf('\n') != -1) {
+                seperator = '\n'
+            }
+            if (seperator === '') {
+                parseSSRLink(all_ssrs)
+            } else {
+                all = all_ssrs.split(seperator)
+                all.forEach((e) => {
+                    parseSSRLink(e)
+                })
+            }
+            parseJson.refresh()
+
+        }
+    })
 }
 
 function getEditedData() {

@@ -57,6 +57,27 @@
 		</div>
 	</div>
 
+	<div class="modal fade" tabindex="-1" role="dialog" id="add-proxy-by-rss" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+					<h4 class="modal-title">Add Proxy by RSS</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<textarea id="proxyRSS" class="form-control" rows="1" style="min-width: 100%;resize: none;"></textarea>
+					</div>
+					<div class="col-sm-offset-5">
+						<button id="addProxy_RSS" type="button" class="btn btn-default" data-dismiss="modal">Add Proxy</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div class="modal fade" tabindex="-1" role="dialog" id="edit-proxy-data" data-backdrop="static" data-keyboard="false">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
@@ -169,6 +190,7 @@
 		document.getElementById('confirmButton').onclick = require('./render/connectHelper').updateData
 		document.getElementById('addProxy_detail').onclick = require('./render/connectHelper').addData_detail
 		document.getElementById('addProxy_links').onclick = require('./render/connectHelper').addData_link
+		document.getElementById('addProxy_RSS').onclick = require('./render/connectHelper').addData_rss
 		$('#edit-proxy-data').on('hidden.bs.modal', (e) => {
 			form_ = document.getElementById('proxyDataForm')
 			form_.reset()
@@ -176,6 +198,9 @@
 		})
 		$('#add-proxy-by-link').on('hidden.bs.modal', (e) => {			
 			document.getElementById('proxyLinks').value = ''
+		})
+		$('#add-proxy-by-rss').on('hidden.bs.modal', (e) => {			
+			document.getElementById('proxyRSS').value = ''
 		})
 	}
 </script>

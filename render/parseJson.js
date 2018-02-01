@@ -5,7 +5,7 @@ const mark = ['remarks', 'server', 'server_port', /*  'password', */ 'method', '
 
 let path = './electron-config.json'
 
-exports.proxyData = {}
+exports.proxyData = {'configs':[]}
 
 exports.refresh = () => {
 	showProxyInfo(exports.proxyData['configs'])
