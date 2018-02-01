@@ -1,1 +1,1 @@
-# ShadowsockR-electron# ShadowsockR-electron
+# ShadowsockR-electron
