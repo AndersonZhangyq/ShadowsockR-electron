@@ -6,7 +6,12 @@ const { exec } = require('child_process')
 let win
 
 function createWindow() {
-	win = new BrowserWindow({ width: 800, height: 600, show: false })
+	win = new BrowserWindow({
+		width: 800,
+		height: 600,
+		show: false,
+		icon: path.join(__dirname, 'ssr_64x64.png')
+	})
 
 	win.once('ready-to-show', () => {
 		win.show()
@@ -114,8 +119,11 @@ var menuBar = [
 			{
 				label: 'Learn More',
 				click() { require('electron').shell.openExternal('https://electronjs.org') }
-			},{
+			}, {
 				label: 'Electron version: ' + process.versions.electron,
+				enabled: false
+			}, {
+				label: 'V8 version: ' + process.versions.chrome,
 				enabled: false
 			}
 		]

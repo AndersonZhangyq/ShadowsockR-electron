@@ -238,10 +238,10 @@ function parseSSRLink(data) {
     other_data = deocoded_data[5].substring(deocoded_data[5].indexOf('/?') + 2)
     search = new URLSearchParams(other_data)
     pwd = Buffer.from(deocoded_data[5].substring(0, deocoded_data[5].indexOf('/?')), 'base64').toString('utf-8')
-    pp = search.get('protoparam')
-    op = search.get('obfsparam')
-    r = search.get('remarks')
-    g = search.get('group')
+    pp = search.get('protoparam').replace(/ /g, '+')
+    op = search.get('obfsparam').replace(/ /g, '+')
+    r = search.get('remarks').replace(/ /g, '+')
+    g = search.get('group').replace(/ /g, '+')
     data_to_insert = {
         server: deocoded_data[0],
         server_port: deocoded_data[1],
