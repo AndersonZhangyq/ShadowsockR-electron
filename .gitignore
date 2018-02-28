@@ -6,4 +6,4 @@
 debain.json
 electron-config.json
 settings.json
-./node_modules/*
+node_modules/
