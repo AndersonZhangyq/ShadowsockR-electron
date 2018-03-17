@@ -63,7 +63,7 @@ function showProxyInfo(data) {
 			row.insertCell(i).innerHTML = data[label]
 			i++
 		})
-		connectHelper.addRightClickHandler(row)
+		connectHelper.addRightClickHandlerDdbclick(row)
 	} else {
 		data.forEach((element, index) => {
 			row = tbody.insertRow(tbody.rows.lenght)
@@ -74,7 +74,7 @@ function showProxyInfo(data) {
 				row.insertCell(i).innerHTML = element[label]
 				i++
 			})
-			connectHelper.addRightClickHandler(row)
+			connectHelper.addRightClickHandlerDdbclick(row)
 		});
 	}
 	exports.proxyData = { 'configs': data }

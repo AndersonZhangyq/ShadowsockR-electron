@@ -7,3 +7,4 @@ debain.json
 electron-config.json
 settings.json
 node_modules/
+release-builds/

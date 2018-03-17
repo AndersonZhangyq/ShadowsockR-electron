@@ -74,7 +74,7 @@ ipcRenderer.on('Terminate-all-threads', (event, directory) => {
 })
 
 ipcRenderer.on('Terminate-before-close-app', (event, directory) => {
-    if (connectTr === null){
+    if (connectTr === null) {
         ipcRenderer.send('quit-app')
         return
     }
@@ -98,7 +98,7 @@ ipcRenderer.on('Add-Proxy-by-detail', (event, directory) => {
     document.getElementById('confirmButton').style = 'display: none'
 })
 
-exports.addRightClickHandler = (tr) => {
+exports.addRightClickHandlerDdbclick = (tr) => {
     tr.oncontextmenu = (e) => {
         const tr = e.currentTarget
         isConnected = tr.className !== ''
@@ -173,6 +173,35 @@ exports.addRightClickHandler = (tr) => {
         e.preventDefault()
         menu.popup(remote.getCurrentWindow)
     }
+    tr.ondblclick = (e) => {
+        const tr = e.currentTarget
+        isConnected = tr.className !== ''
+        const index = tr.firstChild.innerHTML
+        if (hasConnected) {
+            dialog.showMessageBox({
+                type: 'warning',
+                buttons: ['Force Connect', 'Cancel'],
+                defaultId: 1,
+                message: 'You have already connect to a proxy server.\nIf you want to connect this one, the origin connection will be terminated!\nAre you sure you want to force connect this proxy server?',
+                cancelId: 1,
+            }, (response) => {
+                if (response == 0) {
+                    tr.className = 'success'
+                    hasConnected = true
+                    connectTr.className = ''
+                    terminateConnection()
+                    connectTr = tr
+                    startConnection(index)
+                }
+
+            })
+        } else {
+            tr.className = 'success'
+            hasConnected = true
+            connectTr = tr
+            startConnection(index)
+        }
+    }
 }
 
 function getFullCmd(index) {
@@ -230,7 +259,7 @@ exports.addData_link = () => {
 }
 
 function parseSSRLink(data) {
-    if (data.indexOf('ssr://') == -1){
+    if (data.indexOf('ssr://') == -1) {
         return
     }
     data = data.substring(data.indexOf('ssr://') + 6).trim()
@@ -274,7 +303,7 @@ exports.addData_rss = () => {
     exec(`curl ${rss_url}`, (err, stdout, stderr) => {
         if (err)
             console.log(err)
-        else{
+        else {
             all_ssrs = Buffer.from(stdout, 'base64').toString('utf-8')
             all_ssrs.trim()
             seperator = ''
