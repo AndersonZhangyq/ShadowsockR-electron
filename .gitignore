@@ -8,3 +8,4 @@ electron-config.json
 settings.json
 node_modules/
 release-builds/
+.eslintrc.json

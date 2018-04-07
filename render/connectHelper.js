@@ -34,29 +34,29 @@ fs.open(path, 'r', (err, fd) => {
     }
 })
 
-ipcRenderer.on('Add-Proxy-by-SSR-link', (event) => {
+ipcRenderer.on('Add-Proxy-by-SSR-link', () => {
     $('#add-proxy-by-link').modal('toggle')
 })
 
-ipcRenderer.on('Add-Proxy-by-RSS', (event) => {
+ipcRenderer.on('Add-Proxy-by-RSS', () => {
     $('#add-proxy-by-rss').modal('toggle')
 })
 
 ipcRenderer.on('SSR-location', (event, directory) => {
     console.log(directory)
     ssrLocation = directory
-    dataToWrite = JSON.stringify({ ssrLocation: directory })
+    let dataToWrite = JSON.stringify({ ssrLocation: directory })
     fs.writeFile(path, dataToWrite, (err) => {
         if (err)
             console.log(err)
     })
 })
 
-ipcRenderer.on('Terminate-all-threads', (event, directory) => {
-    exec('ps -ef|grep local.py', (err, stdout, stderr) => {
+ipcRenderer.on('Terminate-all-threads', () => {
+    exec('ps -ef|grep local.py', (err, stdout) => {
         if (err) console.log(err)
         else {
-            threads = stdout.match(/anderson(.*)?python(.*)?local.py/g)
+            let threads = stdout.match(/anderson(.*)?python(.*)?local.py/g)
             hasConnected = false
             if (connectTr)
                 connectTr.className = ''
@@ -73,7 +73,7 @@ ipcRenderer.on('Terminate-all-threads', (event, directory) => {
     })
 })
 
-ipcRenderer.on('Terminate-before-close-app', (event, directory) => {
+ipcRenderer.on('Terminate-before-close-app', () => {
     if (connectTr === null) {
         ipcRenderer.send('quit-app')
         return
@@ -92,7 +92,7 @@ ipcRenderer.on('Terminate-before-close-app', (event, directory) => {
     })
 })
 
-ipcRenderer.on('Add-Proxy-by-detail', (event, directory) => {
+ipcRenderer.on('Add-Proxy-by-detail', () => {
     $('#edit-proxy-data').modal('toggle')
     document.getElementById('addProxy_detail').style = ''
     document.getElementById('confirmButton').style = 'display: none'
@@ -101,7 +101,7 @@ ipcRenderer.on('Add-Proxy-by-detail', (event, directory) => {
 exports.addRightClickHandlerDdbclick = (tr) => {
     tr.oncontextmenu = (e) => {
         const tr = e.currentTarget
-        isConnected = tr.className !== ''
+        let isConnected = tr.className !== ''
         const index = tr.firstChild.innerHTML
         const rightClickMenu = [
             {
@@ -145,7 +145,7 @@ exports.addRightClickHandlerDdbclick = (tr) => {
             }, {
                 label: 'Edit',
                 click: () => {
-                    originData = parseJson.proxyData['configs'][index]
+                    let originData = parseJson.proxyData['configs'][index]
                     $('#edit-proxy-data').modal('toggle')
                     document.getElementById('confirmButton').style = ''
                     document.getElementById('addProxy_detail').style = 'display: none'
@@ -169,13 +169,12 @@ exports.addRightClickHandlerDdbclick = (tr) => {
                 }
             }
         ]
-        menu = Menu.buildFromTemplate(rightClickMenu)
+        let menu = Menu.buildFromTemplate(rightClickMenu)
         e.preventDefault()
         menu.popup(remote.getCurrentWindow)
     }
     tr.ondblclick = (e) => {
         const tr = e.currentTarget
-        isConnected = tr.className !== ''
         const index = tr.firstChild.innerHTML
         if (hasConnected) {
             dialog.showMessageBox({
@@ -205,8 +204,7 @@ exports.addRightClickHandlerDdbclick = (tr) => {
 }
 
 function getFullCmd(index) {
-    data = parseJson.proxyData.configs[index]
-    cmd = ''
+    let data = parseJson.proxyData.configs[index], cmd = ''
     for (const key in option) {
         cmd += ` ${key} "${data[option[key]]}"`
     }
@@ -239,9 +237,9 @@ function terminateConnection() {
 }
 
 exports.addData_link = () => {
-    links = document.getElementById('proxyLinks').value
+    let links = document.getElementById('proxyLinks').value
     links.trim()
-    seperator = ''
+    let seperator = ''
     if (links.indexOf(';') != -1) {
         seperator = ';'
     } else if (links.indexOf('\n') != -1) {
@@ -250,7 +248,7 @@ exports.addData_link = () => {
     if (seperator === '') {
         parseSSRLink(links)
     } else {
-        all = links.split(seperator)
+        let all = links.split(seperator)
         all.forEach((e) => {
             parseSSRLink(e)
         })
@@ -263,14 +261,14 @@ function parseSSRLink(data) {
         return
     }
     data = data.substring(data.indexOf('ssr://') + 6).trim()
-    deocoded_data = Buffer.from(data, 'base64').toString('utf-8').split(':')
-    other_data = deocoded_data[5].substring(deocoded_data[5].indexOf('/?') + 2)
-    search = new URLSearchParams(other_data)
-    pwd = Buffer.from(deocoded_data[5].substring(0, deocoded_data[5].indexOf('/?')), 'base64').toString('utf-8')
-    pp = search.get('protoparam').replace(/ /g, '+')
-    op = search.get('obfsparam').replace(/ /g, '+')
-    r = search.get('remarks').replace(/ /g, '+')
-    g = search.get('group').replace(/ /g, '+')
+    let deocoded_data = Buffer.from(data, 'base64').toString('utf-8').split(':'),
+    other_data = deocoded_data[5].substring(deocoded_data[5].indexOf('/?') + 2),
+    search = new URLSearchParams(other_data),
+    pwd = Buffer.from(deocoded_data[5].substring(0, deocoded_data[5].indexOf('/?')), 'base64').toString('utf-8'),
+    pp = search.get('protoparam').replace(/ /g, '+'),
+    op = search.get('obfsparam').replace(/ /g, '+'),
+    r = search.get('remarks').replace(/ /g, '+'),
+    g = search.get('group').replace(/ /g, '+'),
     data_to_insert = {
         server: deocoded_data[0],
         server_port: deocoded_data[1],
@@ -287,26 +285,26 @@ function parseSSRLink(data) {
 }
 
 exports.updateData = () => {
-    index = document.getElementById('proxyDataForm').dataset.index
+    let index = document.getElementById('proxyDataForm').dataset.index
     parseJson.proxyData['configs'][index] = getEditedData()
     parseJson.refresh()
 }
 
 exports.addData_detail = () => {
-    newData = getEditedData()
+    let newData = getEditedData()
     parseJson.proxyData['configs'].push(newData)
     parseJson.refresh()
 }
 
 exports.addData_rss = () => {
-    rss_url = document.getElementById('proxyRSS').value
-    exec(`curl ${rss_url}`, (err, stdout, stderr) => {
+    let rss_url = document.getElementById('proxyRSS').value
+    exec(`curl ${rss_url}`, (err, stdout) => {
         if (err)
             console.log(err)
         else {
-            all_ssrs = Buffer.from(stdout, 'base64').toString('utf-8')
+            let all_ssrs = Buffer.from(stdout, 'base64').toString('utf-8')
             all_ssrs.trim()
-            seperator = ''
+            let seperator = ''
             if (all_ssrs.indexOf(';') != -1) {
                 seperator = ';'
             } else if (all_ssrs.indexOf('\n') != -1) {
@@ -315,7 +313,7 @@ exports.addData_rss = () => {
             if (seperator === '') {
                 parseSSRLink(all_ssrs)
             } else {
-                all = all_ssrs.split(seperator)
+                let all = all_ssrs.split(seperator)
                 all.forEach((e) => {
                     parseSSRLink(e)
                 })
@@ -327,7 +325,7 @@ exports.addData_rss = () => {
 }
 
 function getEditedData() {
-    newData = {
+    return {
         server: document.getElementById('server').value,
         server_port: document.getElementById('server_port').value,
         password: document.getElementById('password').value,
@@ -338,10 +336,9 @@ function getEditedData() {
         obfsparam: document.getElementById('obfsparam').value,
         remarks: document.getElementById('remarks').value,
         group: ''
-    }
-    return newData;
+    };
 }
 
 function showErrorMessage(notification) {
-    const myNotification = new window.Notification(notification.title, notification)
+    new window.Notification(notification.title, notification)
 }

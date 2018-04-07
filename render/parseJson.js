@@ -1,4 +1,4 @@
-const { ipcRenderer, dialog } = require('electron')
+const { ipcRenderer } = require('electron')
 const fs = require('fs')
 const connectHelper = require('./connectHelper.js')
 const mark = ['remarks', 'server', 'server_port', /*  'password', */ 'method', 'protocol', 'protocolparam', 'obfs', 'obfsparam']
@@ -21,6 +21,7 @@ ipcRenderer.on('file-to-open', (event, filePath) => {
 				alert('An error occur when reading file ' + err.message)
 				return
 			} else {
+				let configs
 				data = JSON.parse(data)
 				if (data['configs'] !== undefined)
 					configs = data['configs']
@@ -47,6 +48,7 @@ fs.open(path, 'r', (err, fd) => {
 
 // data must be pure proxy data
 function showProxyInfo(data) {
+	let tbody
 	if (data === undefined)
 		return
 	tbody = document.getElementById('proxyInfo')
@@ -54,11 +56,12 @@ function showProxyInfo(data) {
 		tbody.firstChild.remove()
 	}
 	if (data.length === undefined) {
+		let row
 		// object not array
 		row = tbody.insertRow(tbody.rows.lenght)
 		// row.dataset.index = index
 		row.insertCell(0).innerHTML = 1
-		i = 1
+		let i = 1
 		mark.forEach(label => {
 			row.insertCell(i).innerHTML = data[label]
 			i++
@@ -66,10 +69,11 @@ function showProxyInfo(data) {
 		connectHelper.addRightClickHandlerDdbclick(row)
 	} else {
 		data.forEach((element, index) => {
+			let row
 			row = tbody.insertRow(tbody.rows.lenght)
 			// row.dataset.index = index
 			row.insertCell(0).innerHTML = index
-			i = 1
+			let i = 1
 			mark.forEach(label => {
 				row.insertCell(i).innerHTML = element[label]
 				i++
@@ -82,7 +86,7 @@ function showProxyInfo(data) {
 }
 
 function saveData() {
-	dataToWrite = JSON.stringify(exports.proxyData)
+	let dataToWrite = JSON.stringify(exports.proxyData)
 	fs.writeFile(path, dataToWrite, (err) => {
 		if (err)
 			console.log(err)
