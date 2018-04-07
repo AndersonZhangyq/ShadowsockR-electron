@@ -1,7 +1,6 @@
 const { app, Menu, BrowserWindow, dialog, ipcMain } = require('electron')
 const path = require('path')
 const url = require('url')
-const { exec } = require('child_process')
 
 let win
 
@@ -45,7 +44,7 @@ var menuBar = [
 				label: 'Open File',
 				accelerator: 'Control+O',
 				click: function () {
-					properties = ['createDirectory', 'openFile'],
+					let properties = ['createDirectory', 'openFile'],
 						parentWindow = (process.platform == 'darwin') ? null : BrowserWindow.getFocusedWindow();
 
 					dialog.showOpenDialog(parentWindow, properties, function (f) {
@@ -78,7 +77,7 @@ var menuBar = [
 			{
 				label: 'SSR location',
 				click: () => {
-					properties = ['openDirectory'/*  , 'openFile' */],
+					let properties = ['openDirectory'/*  , 'openFile' */],
 						parentWindow = (process.platform == 'darwin') ? null : BrowserWindow.getFocusedWindow();
 
 					dialog.showOpenDialog(parentWindow, properties, function (f) {
@@ -168,7 +167,7 @@ if (process.platform === 'darwin') {
 	]
 }
 
-menu = Menu.buildFromTemplate(menuBar);
+let menu = Menu.buildFromTemplate(menuBar);
 
 Menu.setApplicationMenu(menu);
 

@@ -185,12 +185,13 @@
 <script>
 	window.$ = window.jQuery = require('./js/jquery-3.2.1.min.js')
 	window.onload = () => {
-		parseJson = require('./render/parseJson.js')
-		// parseJson.checkData()
-		document.getElementById('confirmButton').onclick = require('./render/connectHelper').updateData
-		document.getElementById('addProxy_detail').onclick = require('./render/connectHelper').addData_detail
-		document.getElementById('addProxy_links').onclick = require('./render/connectHelper').addData_link
-		document.getElementById('addProxy_RSS').onclick = require('./render/connectHelper').addData_rss
+		require('./render/connectHelper.js')
+		manageSSR = require('./render/manageSSR.js')
+		// manageSSR.checkData()
+		document.getElementById('confirmButton').onclick = manageSSR.updateData
+		document.getElementById('addProxy_detail').onclick = manageSSR.addData_detail
+		document.getElementById('addProxy_links').onclick = manageSSR.addData_link
+		document.getElementById('addProxy_RSS').onclick = manageSSR.addData_rss
 		$('#edit-proxy-data').on('hidden.bs.modal', (e) => {
 			form_ = document.getElementById('proxyDataForm')
 			form_.reset()
