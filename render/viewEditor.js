@@ -10,16 +10,19 @@ const { ipcRenderer } = require('electron')
 const manageSSR = require('./manageSSR.js')
 const mark = ['remarks', 'server', 'server_port', /*  'password', */ 'method', 'protocol', 'protocolparam', 'obfs', 'obfsparam']
 
-let hasConnected = false, connectTr = null
+var hasConnected = false, connectTr = null
 
-document.addEventListener('SetState', (e) => {
-    hasConnected = e.detail.has_connected
+exports.setState = (has_connected, tr) => {
+    hasConnected = has_connected
     if (hasConnected == false) {
         if (connectTr != null)
             connectTr.className = ''
         connectTr = null
+    } else {
+        connectTr = tr
+        connectTr.className = 'success'
     }
-})
+}
 
 exports.showProxyInfo = (data) => {
     let tbody
@@ -91,25 +94,23 @@ exports.addRightClickHandlerDdbclick = (tr) => {
                             cancelId: 1,
                         }, (response) => {
                             if (response == 0) {
-                                tr.className = 'success'
                                 hasConnected = true
                                 connectTr.className = ''
-                                connectTr = tr
                                 document.dispatchEvent(new CustomEvent('ForceStartConnection', {
                                     detail: {
-                                        'index': index
+                                        'index': index,
+                                        'tr': tr
                                     }
                                 }))
                             }
 
                         })
                     } else {
-                        tr.className = 'success'
                         hasConnected = true
-                        connectTr = tr
                         document.dispatchEvent(new CustomEvent('StartConnection', {
                             detail: {
-                                'index': index
+                                'index': index,
+                                'tr': tr
                             }
                         }))
                     }
@@ -118,9 +119,7 @@ exports.addRightClickHandlerDdbclick = (tr) => {
                 label: 'Disconnect',
                 enabled: isConnected,
                 click: () => {
-                    tr.className = ''
                     hasConnected = false
-                    connectTr = null
                     document.dispatchEvent(new CustomEvent('TerminateConnection'))
                 }
             }, {
@@ -166,25 +165,23 @@ exports.addRightClickHandlerDdbclick = (tr) => {
                 cancelId: 1,
             }, (response) => {
                 if (response == 0) {
-                    tr.className = 'success'
                     hasConnected = true
                     connectTr.className = ''
-                    connectTr = tr
                     document.dispatchEvent(new CustomEvent('ForceStartConnection', {
                         detail: {
-                            'index': index
+                            'index': index,
+                            'tr': tr
                         }
                     }))
                 }
 
             })
         } else {
-            tr.className = 'success'
             hasConnected = true
-            connectTr = tr
             document.dispatchEvent(new CustomEvent('StartConnection', {
                 detail: {
-                    'index': index
+                    'index': index,
+                    'tr': tr
                 }
             }))
         }

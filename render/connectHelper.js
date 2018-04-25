@@ -54,7 +54,9 @@ ipcRenderer.on('SSR-location', (event, directory) => {
 
 ipcRenderer.on('Terminate-all-threads', () => {
     exec('ps -ef|grep local.py', (err, stdout) => {
-        if (err) console.log(err)
+        if (err) {
+            console.log(err)
+        }
         else {
             let threads = stdout.match(/anderson(.*)?python(.*)?local.py/g)
             connectState(false)
@@ -72,7 +74,7 @@ ipcRenderer.on('Terminate-all-threads', () => {
 })
 
 ipcRenderer.on('Terminate-before-close-app', () => {
-    if (require('./viewEditor.js').getState()){
+    if (require('./viewEditor.js').getState()) {
         dialog.showMessageBox({
             type: 'warning',
             buttons: ['Terminate all connect', 'Cancel'],
@@ -81,11 +83,12 @@ ipcRenderer.on('Terminate-before-close-app', () => {
             cancelId: 1,
         }, (response) => {
             if (response == 0) {
+                connectState(false)
                 terminateConnection()
                 ipcRenderer.send('quit-app')
             }
         })
-    }else{
+    } else {
         ipcRenderer.send('quit-app')
     }
 })
@@ -99,14 +102,21 @@ function getFullCmd(index) {
 }
 
 function startConnection(index) {
-    connectState(true)
     subThread = exec(`python ${ssrLocation} ${getFullCmd(index)}`, (err, stdout, stderr) => {
         if (err) {
-            connectState(false)
-            showErrorMessage({
-                title: '错误信息',
-                body: stderr
-            })
+            if (stderr.search("ERROR") != -1) {
+                connectState(false)
+                let errorM = []
+                stderr.split('\n').forEach((e) => {
+                    if (e.search("ERROR") != -1)
+                        errorM.push(e);
+                })
+                stderr = errorM.join('\n')
+                showErrorMessage({
+                    title: '错误信息',
+                    body: stderr
+                })
+            }
             console.log(err)
         } else {
             console.log(`std out: ${stdout}`)
@@ -117,7 +127,6 @@ function startConnection(index) {
 }
 
 function terminateConnection() {
-    connectState(false)
     if (subThread === -1)
         return
     exec(`pkill -P ${subThread}`)
@@ -130,29 +139,24 @@ function showErrorMessage(notification) {
 }
 
 document.addEventListener("StartConnection", (e) => {
+    connectState(true, e.detail.tr)
     startConnection(e.detail.index)
 })
 
 document.addEventListener("TerminateConnection", () => {
+    connectState(false)
     terminateConnection()
 })
 
 document.addEventListener("ForceStartConnection", (e) => {
     terminateConnection()
+    connectState(true, e.detail.tr)
     startConnection(e.detail.index)
 })
 
-function connectState(isSucccess) {
+function connectState(isSucccess, tr) {
     if (isSucccess)
-        document.dispatchEvent(new CustomEvent('SetState', {
-            detail: {
-                'has_connected': true
-            }
-        }))
+        require('./viewEditor.js').setState(true, tr)
     else
-        document.dispatchEvent(new CustomEvent('SetState', {
-            detail: {
-                'has_connected': false
-            }
-        }))
+        require('./viewEditor.js').setState(false)
 }
