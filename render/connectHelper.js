@@ -21,7 +21,7 @@ const option = {
     '-g': 'obfsparam'
 }
 
-let subThread = -1, ssrLocation = '', path = './settings.json'
+let subThread = -1, ssrLocation = '', path = remote.getGlobal('exePath') + '/settings.json'
 
 /**
  * Read settings from file

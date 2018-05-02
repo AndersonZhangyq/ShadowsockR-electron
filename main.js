@@ -186,3 +186,5 @@ ipcMain.on('quit-app', () => {
 	win.removeListener('close', windows_close)
 	app.quit()
 })
+
+global.exePath = app.getAppPath()

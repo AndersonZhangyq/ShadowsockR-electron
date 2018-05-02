@@ -5,11 +5,12 @@
  * notify view update
  */
 
+const remote = require('electron').remote
 const { ipcRenderer } = require('electron')
 const fs = require('fs')
 const viewEditor = require('./viewEditor.js')
 const exec = require('child_process').exec
-let path = './electron-config.json', proxyData = { 'configs': [] }
+let path = remote.getGlobal('exePath') + '/electron-config.json', proxyData = { 'configs': [] }
 
 exports.refresh = () => {
     viewEditor.showProxyInfo(proxyData['configs'])
@@ -19,7 +20,6 @@ exports.refresh = () => {
 exports.getDataByIndex = (index) => proxyData['configs'][index]
 
 exports.getAllData = () => proxyData['configs']
-
 
 exports.updateAllData = (data) => {
     proxyData['configs'] = data
