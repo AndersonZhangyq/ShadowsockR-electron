@@ -167,7 +167,7 @@ if (process.platform === 'darwin') {
 	]
 }
 
-let menu = Menu.buildFromTemplate(menuBar);
+let menu = Menu.buildFromTemplate(menuBar)
 
 Menu.setApplicationMenu(menu);
 
@@ -182,9 +182,21 @@ app.on('activate', () => {
 	createWindow()
 })
 
+const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
+	// Someone tried to run a second instance, we should focus our window.
+	if (win) {
+		if (win.isMinimized()) win.restore()
+		win.focus()
+	}
+})
+
+if (isSecondInstance) {
+	app.quit()
+}
+
 ipcMain.on('quit-app', () => {
 	win.removeListener('close', windows_close)
 	app.quit()
 })
 
-global.exePath = app.getAppPath()
+global.exePath = process.cwd()

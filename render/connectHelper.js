@@ -118,6 +118,7 @@ function startConnection(index) {
                 })
             }
             console.log(err)
+            connectState(false)
         } else {
             console.log(`std out: ${stdout}`)
             console.log(`std err: ${stderr}`)

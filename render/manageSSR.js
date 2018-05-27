@@ -98,22 +98,23 @@ function parseSSRLink(data) {
         other_data = deocoded_data[5].substring(deocoded_data[5].indexOf('/?') + 2),
         search = new URLSearchParams(other_data),
         pwd = Buffer.from(deocoded_data[5].substring(0, deocoded_data[5].indexOf('/?')), 'base64').toString('utf-8'),
-        pp = search.get('protoparam').replace(/ /g, '+'),
-        op = search.get('obfsparam').replace(/ /g, '+'),
-        r = search.get('remarks').replace(/ /g, '+'),
-        g = search.get('group').replace(/ /g, '+'),
-        data_to_insert = {
-            server: deocoded_data[0],
-            server_port: deocoded_data[1],
-            password: pwd,
-            protocol: deocoded_data[2],
-            method: deocoded_data[3],
-            protocolparam: pp ? Buffer.from(pp, 'base64').toString('utf-8') : '',
-            obfs: deocoded_data[4],
-            obfsparam: op ? Buffer.from(op, 'base64').toString('utf-8') : '',
-            remarks: r ? Buffer.from(r, 'base64').toString('utf-8') : undefined,
-            group: g ? Buffer.from(g, 'base64').toString('utf-8') : ''
-        }
+        pp, op, r, g
+    pp = ((pp = search.get('protoparam')) == null) ? pp : pp.replace(/ /g, '+')
+    op = ((op = search.get('obfsparam')) == null) ? op : op.replace(/ /g, '+')
+    r = ((r = search.get('remarks')) == null) ? r : r.replace(/ /g, '+')
+    g = ((g = search.get('group')) == null) ? g : g.replace(/ /g, '+')
+    let data_to_insert = {
+        server: deocoded_data[0],
+        server_port: deocoded_data[1],
+        password: pwd,
+        protocol: deocoded_data[2],
+        method: deocoded_data[3],
+        protocolparam: pp ? Buffer.from(pp, 'base64').toString('utf-8') : '',
+        obfs: deocoded_data[4],
+        obfsparam: op ? Buffer.from(op, 'base64').toString('utf-8') : '',
+        remarks: r ? Buffer.from(r, 'base64').toString('utf-8') : undefined,
+        group: g ? Buffer.from(g, 'base64').toString('utf-8') : ''
+    }
     proxyData['configs'].push(data_to_insert)
 }
 
